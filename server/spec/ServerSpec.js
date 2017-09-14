@@ -59,12 +59,7 @@ describe('Node Server Request Listener Function', function() {
   it('Should accept posts to /classes/room', function() {
     var stubMsg = {
       username: 'Jono',
-      message: 'Do my bidding!'
-    };
-    var expectedStubRes = {
-      username: 'Jono',
-      message: 'Do my bidding!',
-      objectId: 1
+      text: 'Do my bidding!'
     };
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
     var res = new stubs.response();
@@ -76,14 +71,16 @@ describe('Node Server Request Listener Function', function() {
 
     // Testing for a newline isn't a valid test
     // TODO: Replace with with a valid test
-    expect(res._data).to.equal(JSON.stringify(expectedStubRes));
+    console.log(typeof res._data);
+    expect(JSON.parse(res._data).username).to.equal('Jono');
+    expect(JSON.parse(res._data).text).to.equal('Do my bidding!');
     expect(res._ended).to.equal(true);
   });
 
   it('Should respond with messages that were previously posted', function() {
     var stubMsg = {
       username: 'Jono',
-      message: 'Do my bidding!'
+      text: 'Do my bidding!'
     };
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
     var res = new stubs.response();
@@ -103,7 +100,7 @@ describe('Node Server Request Listener Function', function() {
     var messages = JSON.parse(res._data).results;
     expect(messages.length).to.be.above(0);
     expect(messages[messages.length - 1].username).to.equal('Jono');
-    expect(messages[messages.length - 1].message).to.equal('Do my bidding!');
+    expect(messages[messages.length - 1].text).to.equal('Do my bidding!');
     expect(res._ended).to.equal(true);
   });
 
@@ -135,7 +132,7 @@ describe('Node Server Request Listener Function', function() {
   it('Should post messages into the correct room', function() {
     var stubMsg = {
       username: 'Jono',
-      message: 'Do my bidding!',
+      text: 'Do my bidding!',
       roomname: 'noroom'
     };
     var req = new stubs.request('/classes/messages', 'POST', stubMsg);
