@@ -23,7 +23,9 @@
     "chai": "^3.5.0",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor",
     "mocha": "^2.4.5",
-    "request": "^2.70.0"
+    "request": "^2.70.0",
+    "nodemon": "^1.12.0",
+    "node-inspector": "^1.1.1"
   },
   "babel": {
     "presets": [
