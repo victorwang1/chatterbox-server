@@ -1,9 +1,17 @@
+
 var _storage = [{
   'username': 'example',
   'text': 'exampleText',
   'roomname': 'nope',
   'objectId': '0'
 }];
+
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10 // Seconds.
+};
 // var _storage = [];
 var _reversedStorage = () => _storage.slice().reverse();
 
@@ -39,11 +47,5 @@ var requestHandler = function(request, response) {
   }
 };
 
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
-};
 
 exports.requestHandler = requestHandler;
