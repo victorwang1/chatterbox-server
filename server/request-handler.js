@@ -36,10 +36,10 @@ var requestHandler = function(request, response) {
 
   if (request.method === 'GET' || request.method === 'OPTIONS') {
     response.writeHead(statusCode, headers);
-    response.write(JSON.stringify({'results': _storage}));
-    response.end();
+    // response.write(JSON.stringify({'results': _storage}));
+    response.end(JSON.stringify({'results': _storage}));
   } else if (request.method === 'POST') {
-    let body = [];
+    // let body = [];
     let message = {};
     // request.on('data', (chunk) => {
     //   body.push(chunk);
@@ -57,13 +57,22 @@ var requestHandler = function(request, response) {
     // response.end(JSON.stringify(message));
 
     request.on('data', (chunk) => {
-      body.push(chunk);
-    }).on('end', () => {
-      message = JSON.parse(Buffer.concat(body).toString());
+      // body.push(chunk);
+      message = JSON.parse(chunk.toString('utf8'));
       message.objectId = _storage.length;
-      console.log(message);
       _storage.push(message);
     });
+    // .on('end', () => {
+    //   message = JSON.parse(Buffer.concat(body).toString());
+    //   message.objectId = _storage.length;
+    //   console.log(message);
+    //   _storage.push(message);
+    // });
+    // message = JSON.parse(Buffer.concat(body).toString());
+    // message.objectId = _storage.length;
+    // console.log(message);
+    // _storage.push(message);
+
     response.writeHead(201, headers);
     response.end(JSON.stringify(message));
   }
