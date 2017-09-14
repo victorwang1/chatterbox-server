@@ -11,6 +11,9 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var $url = require('url');
+
+var _storage = [{'username': 'example', 'text': 'exampleText', 'roomname': 'nope'}];
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -39,20 +42,42 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
+  headers['Content-Type'] = 'application/json';
 
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+  if (request.method === 'GET' || request.method === 'OPTIONS') {
 
-  // Make sure to always call response.end() - Node may not send
-  // anything back to the client until you do. The string you pass to
-  // response.end() will be the body of the response - i.e. what shows
-  // up in the browser.
-  //
-  // Calling .end "flushes" the response's internal buffer, forcing
-  // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+    // .writeHead() writes to the request line and headers of the response,
+    // which includes the status and all headers.
+    response.writeHead(statusCode, headers);
+
+    //{'results': [...messages]}
+    response.write(JSON.stringify({'results': _storage}));
+    // Make sure to always call response.end() - Node may not send
+    // anything back to the client until you do. The string you pass to
+    // response.end() will be the body of the response - i.e. what shows
+    // up in the browser.
+    //
+    // Calling .end "flushes" the response's internal buffer, forcing
+    // node to actually send all the data over to the client.
+    response.end();
+  } else if (request.method === 'POST') {
+    let body = [];
+    let message = {};
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    }).on('end', () => {
+      Buffer.concat(body)
+            .toString()
+            .split('&')
+            .map((pair) => pair.split('='))
+            .forEach((tuple) => message[tuple[0]] = tuple[1]);;
+      // at this point, `body` has the entire request body stored in it as a string
+      console.log(message);
+      _storage.push(message);
+      console.log(_storage);
+    });
+    response.end('bye');
+  }
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -71,3 +96,4 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+exports.requestHandler = requestHandler;
