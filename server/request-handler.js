@@ -25,54 +25,24 @@ var requestHandler = function(request, response) {
   headers['Content-Type'] = 'application/json';
 
   if (request.url.indexOf('/classes/messages') !== 0) {
-      //if the request type is NOT options:
     if (request.method !== 'OPTIONS') {
       statusCode = 404;
     }
-    //otherwise, send options:
     response.writeHead(statusCode, headers);
     response.end();
   }
 
   if (request.method === 'GET' || request.method === 'OPTIONS') {
     response.writeHead(statusCode, headers);
-    // response.write(JSON.stringify({'results': _storage}));
     response.end(JSON.stringify({'results': _storage}));
   } else if (request.method === 'POST') {
-    // let body = [];
-    let message = {};
-    // request.on('data', (chunk) => {
-    //   body.push(chunk);
-    // }).on('end', () => {
-    //   Buffer.concat(body)
-    //         .toString()
-    //         .split('&')
-    //         .map((pair) => pair.split('='))
-    //         .forEach((tuple) => message[tuple[0]] = tuple[1]);
-    //   message.objectId = _storage.length;
-    //   console.log(message);
-    //   _storage.push(message);
-    // });
-    // response.writeHead(201, headers);
-    // response.end(JSON.stringify(message));
 
+    let message = {};
     request.on('data', (chunk) => {
-      // body.push(chunk);
       message = JSON.parse(chunk.toString('utf8'));
       message.objectId = _storage.length;
       _storage.push(message);
     });
-    // .on('end', () => {
-    //   message = JSON.parse(Buffer.concat(body).toString());
-    //   message.objectId = _storage.length;
-    //   console.log(message);
-    //   _storage.push(message);
-    // });
-    // message = JSON.parse(Buffer.concat(body).toString());
-    // message.objectId = _storage.length;
-    // console.log(message);
-    // _storage.push(message);
-
     response.writeHead(201, headers);
     response.end(JSON.stringify(message));
   }

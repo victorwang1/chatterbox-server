@@ -18,7 +18,6 @@ describe('Node Server Request Listener Function', function() {
     var res = new stubs.response();
 
     handler.requestHandler(req, res);
-    console.log(res);
 
     expect(res._responseCode).to.equal(200);
     expect(res._ended).to.equal(true);
@@ -71,7 +70,6 @@ describe('Node Server Request Listener Function', function() {
     var res = new stubs.response();
 
     handler.requestHandler(req, res);
-    console.log(req);
 
     // Expect 201 Created response status
     expect(res._responseCode).to.equal(201);
@@ -122,6 +120,43 @@ describe('Node Server Request Listener Function', function() {
       function() {
         expect(res._responseCode).to.equal(404);
       });
+  });
+
+  it('Should respond to OPTIONS requests with a 200 status code', function() {
+    var req = new stubs.request('/classes/messages', 'OPTIONS');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    // Wait for response to return and then check status code
+    expect(res._responseCode).to.equal(200);
+  });
+
+  it('Should post messages into the correct room', function() {
+    var stubMsg = {
+      username: 'Jono',
+      message: 'Do my bidding!',
+      roomname: 'noroom'
+    };
+    var req = new stubs.request('/classes/messages', 'POST', stubMsg);
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+
+    expect(res._responseCode).to.equal(201);
+
+      // Now if we request the log for that room the message we posted should be there:
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    expect(res._responseCode).to.equal(200);
+    var messages = JSON.parse(res._data).results;
+    expect(messages.length).to.be.above(0);
+    expect(messages[messages.length - 1].roomname).to.equal('noroom');
+    expect(res._ended).to.equal(true);
   });
 
 });
