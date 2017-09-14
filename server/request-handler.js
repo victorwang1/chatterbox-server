@@ -64,6 +64,8 @@ var requestHandler = function(request, response) {
       console.log(message);
       _storage.push(message);
     });
+    response.writeHead(201, headers);
+    response.end(JSON.stringify(message));
   }
 };
 
