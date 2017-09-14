@@ -64,6 +64,7 @@ var app = {
       data: { order: '-createdAt' },
       contentType: 'application/json',
       success: function(data) {
+        console.log('Successful get');
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
