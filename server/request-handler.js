@@ -84,7 +84,7 @@ var apiRequestHandler = function(request, response) {
       message = JSON.parse(chunk.toString('utf8'));
       message.objectId = new Date().getTime();
       _storage.push(message);
-      console.log(_storage);
+      // console.log(_storage);
       _updateFile();
     });
     response.writeHead(201, headers);
